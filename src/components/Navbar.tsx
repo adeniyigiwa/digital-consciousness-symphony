@@ -1,10 +1,12 @@
 
 import React, { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
+import { WaitingListForm } from './WaitingListForm';
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [waitingListOpen, setWaitingListOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -46,12 +48,12 @@ const Navbar = () => {
             <a href="#pricing" className="text-sm font-medium hover:text-neutral-600 transition-colors">
               Pricing
             </a>
-            <a 
-              href="#" 
+            <button 
+              onClick={() => setWaitingListOpen(true)}
               className="text-sm font-medium px-4 py-2 rounded-md bg-black text-white hover:bg-neutral-800 transition-colors"
             >
-              Get Started
-            </a>
+              Join Waiting List
+            </button>
           </div>
           
           {/* Mobile Menu Button */}
@@ -120,15 +122,20 @@ const Navbar = () => {
           >
             Pricing
           </a>
-          <a 
-            href="#" 
+          <button
+            onClick={() => {
+              setIsMobileMenuOpen(false);
+              setWaitingListOpen(true);
+            }}
             className="w-full text-center text-base font-medium px-4 py-3 rounded-md bg-black text-white hover:bg-neutral-800 transition-colors"
-            onClick={() => setIsMobileMenuOpen(false)}
           >
-            Get Started
-          </a>
+            Join Waiting List
+          </button>
         </div>
       </div>
+
+      {/* Waiting List Form Dialog */}
+      <WaitingListForm open={waitingListOpen} onOpenChange={setWaitingListOpen} />
     </nav>
   );
 };

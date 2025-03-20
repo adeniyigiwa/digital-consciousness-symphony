@@ -8,6 +8,7 @@ import UseCases from '@/components/UseCases';
 import Pricing from '@/components/Pricing';
 import Footer from '@/components/Footer';
 import { AnimatePresence, motion } from 'framer-motion';
+import { Toaster } from 'sonner';
 
 const Index = () => {
   useEffect(() => {
@@ -58,6 +59,7 @@ const Index = () => {
           <Pricing />
         </main>
         <Footer />
+        <Toaster position="top-center" />
       </motion.div>
     </AnimatePresence>
   );

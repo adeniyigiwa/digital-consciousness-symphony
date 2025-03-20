@@ -1,9 +1,10 @@
-
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { cn } from '@/lib/utils';
+import { WaitingListForm } from './WaitingListForm';
 
 const Hero = () => {
   const orbitRef = useRef<HTMLDivElement>(null);
+  const [waitingListOpen, setWaitingListOpen] = useState(false);
   
   useEffect(() => {
     const orbitElement = orbitRef.current;
@@ -51,12 +52,12 @@ const Hero = () => {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 animation-delay-200 animate-fade-up">
-            <a 
-              href="#" 
+            <button 
+              onClick={() => setWaitingListOpen(true)}
               className="px-6 py-3 rounded-md bg-black text-white font-medium hover:bg-neutral-800 transition-all hover-scale"
             >
-              Get Started
-            </a>
+              Join Waiting List
+            </button>
             <a 
               href="#features" 
               className="px-6 py-3 rounded-md border border-neutral-200 bg-white hover:bg-neutral-50 transition-all hover-scale"
@@ -68,6 +69,7 @@ const Hero = () => {
         
         {/* Orbital visual element */}
         <div className="relative mt-16 mb-8 h-[300px] md:h-[400px] animation-delay-300 animate-fade-in">
+          
           <div
             ref={orbitRef}
             className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[280px] h-[280px] md:w-[340px] md:h-[340px] transition-transform duration-300 ease-out"
@@ -111,6 +113,9 @@ const Hero = () => {
           </div>
         </div>
       </div>
+      
+      {/* Waiting List Form Dialog */}
+      <WaitingListForm open={waitingListOpen} onOpenChange={setWaitingListOpen} />
     </section>
   );
 };
