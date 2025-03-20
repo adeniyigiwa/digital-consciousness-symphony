@@ -61,8 +61,12 @@ export function WaitingListForm({ open, onOpenChange }: WaitingListFormProps) {
       // Log form submission data
       console.log("Form submission data:", values);
       
-      // Send data to Google Drive
-      const success = await sendToGoogleDrive(values);
+      // Send data to Google Drive - ensure we're passing the required fields with correct types
+      const success = await sendToGoogleDrive({
+        name: values.name,
+        email: values.email,
+        industry: values.industry
+      });
       
       if (success) {
         toast.success("You've been added to our waiting list!", {
