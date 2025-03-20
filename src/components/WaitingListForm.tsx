@@ -23,6 +23,7 @@ import {
 } from '@/components/ui/form';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { sendToGoogleDrive } from '@/services/googleDrive';
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -57,19 +58,23 @@ export function WaitingListForm({ open, onOpenChange }: WaitingListFormProps) {
     setIsSubmitting(true);
     
     try {
-      // In a real app, this would send data to a backend
+      // Log form submission data
       console.log("Form submission data:", values);
       
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // Send data to Google Drive
+      const success = await sendToGoogleDrive(values);
       
-      toast.success("You've been added to our waiting list!", {
-        description: "We'll notify you when DCM.ai launches.",
-      });
-      
-      // Reset form and close dialog
-      form.reset();
-      onOpenChange(false);
+      if (success) {
+        toast.success("You've been added to our waiting list!", {
+          description: "Your information has been saved to Google Drive.",
+        });
+        
+        // Reset form and close dialog
+        form.reset();
+        onOpenChange(false);
+      } else {
+        throw new Error("Failed to save to Google Drive");
+      }
       
     } catch (error) {
       toast.error("Something went wrong", {
@@ -87,7 +92,7 @@ export function WaitingListForm({ open, onOpenChange }: WaitingListFormProps) {
         <DialogHeader>
           <DialogTitle>Join Our Waiting List</DialogTitle>
           <DialogDescription>
-            Be the first to try DCM.ai when it launches.
+            Be the first to try DCM.ai when it launches. Your information will be saved to our Google Drive.
           </DialogDescription>
         </DialogHeader>
         

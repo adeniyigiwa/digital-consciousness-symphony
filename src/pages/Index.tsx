@@ -35,6 +35,9 @@ const Index = () => {
 
     // Add animation class to body on page load
     document.body.classList.add('animate-fade-in');
+    
+    // Initialize Google Drive connection
+    console.log("Initializing Google Drive connection...");
 
     // Remove animation class when user navigates away
     return () => {
