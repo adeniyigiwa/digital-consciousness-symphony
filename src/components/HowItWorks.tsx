@@ -1,6 +1,7 @@
 
 import React, { useRef, useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const TabContent = ({ 
   isActive, 
@@ -14,29 +15,40 @@ const TabContent = ({
   items: {icon: React.ReactNode; title: string; description: string;}[];
 }) => {
   return (
-    <div
-      className={cn(
-        "absolute inset-0 transition-all duration-500 ease-in-out",
-        isActive ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-8 pointer-events-none'
-      )}
-    >
-      <h3 className="text-2xl font-medium mb-4">{title}</h3>
-      <p className="text-neutral-600 mb-8">{description}</p>
-      
-      <div className="space-y-6">
-        {items.map((item, index) => (
-          <div key={index} className="flex items-start">
-            <div className="mr-4 p-2 bg-neutral-100 rounded-lg">
-              {item.icon}
-            </div>
-            <div>
-              <h4 className="font-medium mb-1">{item.title}</h4>
-              <p className="text-sm text-neutral-600">{item.description}</p>
-            </div>
+    <AnimatePresence mode="wait">
+      {isActive && (
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -20 }}
+          transition={{ duration: 0.3 }}
+          className="absolute inset-0"
+        >
+          <h3 className="text-2xl font-medium mb-4">{title}</h3>
+          <p className="text-neutral-600 mb-8">{description}</p>
+          
+          <div className="space-y-6">
+            {items.map((item, index) => (
+              <motion.div 
+                key={index} 
+                className="flex items-start"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: index * 0.1 }}
+              >
+                <div className="mr-4 p-2 bg-neutral-100 rounded-lg">
+                  {item.icon}
+                </div>
+                <div>
+                  <h4 className="font-medium mb-1">{item.title}</h4>
+                  <p className="text-sm text-neutral-600">{item.description}</p>
+                </div>
+              </motion.div>
+            ))}
           </div>
-        ))}
-      </div>
-    </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 };
 
@@ -127,7 +139,7 @@ const HowItWorks = () => {
           <div className="lg:w-1/3">
             <div className="bg-white shadow-sm rounded-xl p-1 inline-flex flex-col w-full lg:sticky lg:top-24">
               {tabs.map((tab, index) => (
-                <button
+                <motion.button
                   key={index}
                   className={cn(
                     "text-left p-4 rounded-lg transition-all duration-300",
@@ -136,9 +148,11 @@ const HowItWorks = () => {
                       : "hover:bg-neutral-100"
                   )}
                   onClick={() => setActiveTab(index)}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                 >
                   <span className="font-medium">{tab.title}</span>
-                </button>
+                </motion.button>
               ))}
             </div>
           </div>

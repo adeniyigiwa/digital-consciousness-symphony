@@ -1,6 +1,8 @@
 
 import React, { useRef, useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
+import { useToast } from "@/components/ui/use-toast";
+import { motion } from 'framer-motion';
 
 interface PlanFeature {
   title: string;
@@ -14,6 +16,7 @@ interface PlanProps {
   features: PlanFeature[];
   isPopular?: boolean;
   buttonText?: string;
+  onButtonClick: () => void;
 }
 
 const PricingPlan: React.FC<PlanProps> = ({
@@ -22,16 +25,21 @@ const PricingPlan: React.FC<PlanProps> = ({
   description,
   features,
   isPopular = false,
-  buttonText = "Get Started"
+  buttonText = "Get Started",
+  onButtonClick
 }) => {
   return (
-    <div 
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
       className={cn(
         "relative rounded-xl overflow-hidden transition-all duration-300 hover-lift",
         isPopular 
           ? "border-2 border-neutral-900 shadow-lg" 
           : "border border-neutral-200 shadow-sm"
       )}
+      whileHover={{ y: -5 }}
     >
       {isPopular && (
         <div className="absolute top-0 right-0 bg-black text-white text-xs font-medium px-3 py-1">
@@ -48,6 +56,7 @@ const PricingPlan: React.FC<PlanProps> = ({
         <p className="text-neutral-600 text-sm mb-6">{description}</p>
         
         <button 
+          onClick={onButtonClick}
           className={cn(
             "w-full py-3 rounded-lg font-medium transition-colors mb-6",
             isPopular 
@@ -81,13 +90,14 @@ const PricingPlan: React.FC<PlanProps> = ({
           ))}
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
 const Pricing = () => {
   const [billingPeriod, setBillingPeriod] = useState<'monthly'|'yearly'>('monthly');
   const sectionRef = useRef<HTMLElement>(null);
+  const { toast } = useToast();
   
   // Intersection Observer for animations
   useEffect(() => {
@@ -160,6 +170,23 @@ const Pricing = () => {
     },
   ];
 
+  const handlePlanSelection = (planName: string) => {
+    toast({
+      title: `${planName} Plan Selected`,
+      description: `You've selected the ${planName} plan. ${billingPeriod === 'monthly' ? 'Monthly' : 'Yearly'} billing.`,
+      duration: 3000,
+    });
+  };
+
+  const handleBillingToggle = (period: 'monthly' | 'yearly') => {
+    setBillingPeriod(period);
+    toast({
+      title: `Billing period changed`,
+      description: `You've switched to ${period === 'monthly' ? 'monthly' : 'yearly'} billing.`,
+      duration: 2000,
+    });
+  };
+
   return (
     <section ref={sectionRef} id="pricing" className="py-24 bg-neutral-50 opacity-0">
       <div className="container-custom">
@@ -173,28 +200,32 @@ const Pricing = () => {
           </p>
           
           <div className="inline-flex p-1 items-center bg-white border border-neutral-200 rounded-lg mb-8">
-            <button
+            <motion.button
               className={cn(
                 "px-4 py-2 text-sm font-medium rounded transition-colors",
                 billingPeriod === 'monthly' 
                   ? "bg-neutral-900 text-white" 
                   : "hover:bg-neutral-100"
               )}
-              onClick={() => setBillingPeriod('monthly')}
+              onClick={() => handleBillingToggle('monthly')}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
               Monthly
-            </button>
-            <button
+            </motion.button>
+            <motion.button
               className={cn(
                 "px-4 py-2 text-sm font-medium rounded transition-colors",
                 billingPeriod === 'yearly' 
                   ? "bg-neutral-900 text-white" 
                   : "hover:bg-neutral-100"
               )}
-              onClick={() => setBillingPeriod('yearly')}
+              onClick={() => handleBillingToggle('yearly')}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
               Yearly <span className="text-xs">Save 20%</span>
-            </button>
+            </motion.button>
           </div>
         </div>
         
@@ -208,6 +239,7 @@ const Pricing = () => {
               features={plan.features}
               isPopular={plan.isPopular}
               buttonText={plan.buttonText}
+              onButtonClick={() => handlePlanSelection(plan.name)}
             />
           ))}
         </div>

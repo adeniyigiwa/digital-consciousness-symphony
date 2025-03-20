@@ -1,6 +1,8 @@
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { cn } from '@/lib/utils';
+import { useToast } from "@/components/ui/use-toast";
+import { motion } from 'framer-motion';
 
 interface FeatureCardProps {
   title: string;
@@ -20,7 +22,10 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
   onClick
 }) => {
   return (
-    <div 
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay: Number(delay.replace('ms', '')) / 1000 }}
       className={cn(
         "relative p-6 rounded-xl transition-all duration-300 hover-lift cursor-pointer backdrop-blur-sm",
         isActive 
@@ -28,6 +33,7 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
           : "bg-white/70 border border-neutral-100 hover:bg-white/90"
       )}
       onClick={onClick}
+      whileHover={{ scale: 1.02 }}
     >
       <div className={cn(
         "w-12 h-12 rounded-lg flex items-center justify-center mb-4",
@@ -42,13 +48,14 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
       )}>
         {description}
       </p>
-    </div>
+    </motion.div>
   );
 };
 
 const Features = () => {
-  const [activeFeature, setActiveFeature] = React.useState(0);
+  const [activeFeature, setActiveFeature] = useState(0);
   const sectionRef = useRef<HTMLElement>(null);
+  const { toast } = useToast();
 
   const features = [
     {
@@ -147,6 +154,15 @@ const Features = () => {
     return () => observer.disconnect();
   }, []);
 
+  const handleFeatureClick = (index: number) => {
+    setActiveFeature(index);
+    toast({
+      title: features[index].title,
+      description: features[index].description,
+      duration: 3000,
+    });
+  };
+
   return (
     <section ref={sectionRef} id="features" className="py-24 opacity-0">
       <div className="container-custom">
@@ -169,7 +185,7 @@ const Features = () => {
               icon={feature.icon}
               delay={`${index * 100}ms`}
               isActive={index === activeFeature}
-              onClick={() => setActiveFeature(index)}
+              onClick={() => handleFeatureClick(index)}
             />
           ))}
         </div>

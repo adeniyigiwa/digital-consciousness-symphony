@@ -1,19 +1,23 @@
 
 import React, { useRef, useEffect } from 'react';
 import { cn } from '@/lib/utils';
+import { useToast } from "@/components/ui/use-toast";
+import { motion } from 'framer-motion';
 
 const UseCaseCard = ({ 
   title, 
   description, 
   icon, 
   color, 
-  delay 
+  delay,
+  onClick
 }: { 
   title: string; 
   description: string; 
   icon: React.ReactNode; 
   color: string; 
   delay: string;
+  onClick: () => void;
 }) => {
   const cardRef = useRef<HTMLDivElement>(null);
   
@@ -41,12 +45,15 @@ const UseCaseCard = ({
   }, [delay]);
   
   return (
-    <div 
+    <motion.div 
       ref={cardRef}
       className={cn(
-        "opacity-0 bg-white border border-neutral-100 rounded-xl p-6 hover-lift",
+        "opacity-0 bg-white border border-neutral-100 rounded-xl p-6 hover-lift cursor-pointer",
         "transition-all duration-300"
       )}
+      onClick={onClick}
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.98 }}
     >
       <div className={cn(
         "w-12 h-12 rounded-lg flex items-center justify-center mb-4",
@@ -56,12 +63,13 @@ const UseCaseCard = ({
       </div>
       <h3 className="text-xl font-medium mb-2">{title}</h3>
       <p className="text-neutral-600 text-sm">{description}</p>
-    </div>
+    </motion.div>
   );
 };
 
 const UseCases = () => {
   const sectionRef = useRef<HTMLElement>(null);
+  const { toast } = useToast();
   
   // Intersection Observer for animations
   useEffect(() => {
@@ -122,6 +130,14 @@ const UseCases = () => {
     },
   ];
 
+  const handleUseCaseClick = (title: string) => {
+    toast({
+      title: `Use Case: ${title}`,
+      description: `Learn more about how DCM.ai can help with ${title.toLowerCase()}.`,
+      duration: 3000,
+    });
+  };
+
   return (
     <section ref={sectionRef} id="use-cases" className="py-24 opacity-0">
       <div className="container-custom">
@@ -144,6 +160,7 @@ const UseCases = () => {
               icon={useCase.icon}
               color={useCase.color}
               delay={`${index * 100}ms`}
+              onClick={() => handleUseCaseClick(useCase.title)}
             />
           ))}
         </div>
